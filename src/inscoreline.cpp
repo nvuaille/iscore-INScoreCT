@@ -1,4 +1,4 @@
-#include "inscoreline.h"
+#include "../headers/inscoreline.h"
 #include "ui_inscoreline.h"
 
 /* ************************************************
@@ -203,4 +203,9 @@ void INScoreLine::loadFileName()
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),QString("../../.."));
     ui->creationValue->setText(fileName);
     fileObject = true;
+}
+
+void INScoreLine::on_pushButton_clicked()
+{
+    emit advancedOptions(index);
 }

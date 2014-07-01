@@ -1,4 +1,4 @@
-#include "xmldata.h"
+#include "../headers/xmldata.h"
 
 /* ***********************************************************
  * List of all parameters
@@ -214,7 +214,12 @@ void XmlData::generateXML(map<int, INScoreObject *> *_objectList)
                     paramElement.appendChild(variableElement);
                     j++;
                 }
-                objectElement.appendChild(paramElement);
+                if(i==0) { // the "show" variable is in the same level than a parameter.
+                    objectElement.appendChild(variableElement);
+                }
+                else {
+                    objectElement.appendChild(paramElement);
+                }
             }
             i++;
         }

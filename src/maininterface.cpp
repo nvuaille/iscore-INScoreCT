@@ -1,4 +1,4 @@
-#include "maininterface.h"
+#include "../headers/maininterface.h"
 #include "ui_maininterface.h"
 
 MainInterface::MainInterface(QWidget *parent) :
@@ -7,7 +7,8 @@ MainInterface::MainInterface(QWidget *parent) :
 {
     ui->setupUi(this);
     entryLineList.clear();
-    objectList.clear();
+    dataContainer = new INScoreData();
+
     QObject::connect(ui->quitButton, SIGNAL(clicked()), this, SLOT(quitApp()));
     QObject::connect(ui->generateButton, SIGNAL(clicked()), this, SLOT(readInputs()));
     QObject::connect(ui->newLineButton, SIGNAL(clicked()), this, SLOT(newLine()));
@@ -26,30 +27,33 @@ MainInterface::~MainInterface()
 void MainInterface::newLine()
 {
     entryLineList[newIndex] = new INScoreLine(newIndex);
-    objectList[newIndex] = new INScoreObject();
+    dataContainer->addObject(newIndex);
     ui->scrollAreaWidgetContents->layout()->addWidget(entryLineList[newIndex]);
     QObject::connect(entryLineList[newIndex], SIGNAL(removeLine(const int)), this, SLOT(removeObjects(const int)));
+    QObject::connect(entryLineList[newIndex], SIGNAL(advancedOptions(const int)), this, SLOT(advancedOptionsWindow(const int)));
     ++newIndex;
 }
 
 void MainInterface::readInputs()
 {
     projectName = QFileDialog::getSaveFileName(this,QString("Save"),QString("../../../.."));
-    if(!projectName.isNull()) {  // <- if no name, nothing is done
+    if(!projectName.isNull()) {  // <- if no save name, nothing is done
         dom = new XmlData();
-        map<int, INScoreObject*>::iterator it = objectList.begin();
-        while(it != objectList.end()) {
+
+        map<int, INScoreObject*> *objectList = dataContainer->getList();
+        map<int, INScoreObject*>::iterator it = objectList->begin();
+        while(it != objectList->end()) {
             if((entryLineList[it->first]->objectName().isEmpty())) { // <- if the object has no name, we remove it
                 int toDelete = it->first;
                 ++it;
                 removeObjects(toDelete);
             }
             else {
-                it->second->setName((entryLineList[it->first]->objectName()).toStdString());
-                it->second->setPath((entryLineList[it->first]->objectPath()).toStdString());
-                it->second->setToCreate(entryLineList[it->first]->isToCreate());
-                it->second->setType((entryLineList[it->first]->selectedType()).toStdString());
-                if(!entryLineList[it->first]->getCreationValue().isEmpty()) {
+                it->second->setName((entryLineList[it->first]->objectName()).toStdString()); // Name
+                it->second->setPath((entryLineList[it->first]->objectPath()).toStdString()); // path
+                it->second->setToCreate(entryLineList[it->first]->isToCreate()); // to create
+                it->second->setType((entryLineList[it->first]->selectedType()).toStdString()); // type
+                if(!entryLineList[it->first]->getCreationValue().isEmpty()) { // init value if not empty
                     it->second->setCreationValue(entryLineList[it->first]->getCreationValue().toStdString());
                 }
 
@@ -64,7 +68,7 @@ void MainInterface::readInputs()
             }
         }
         writeXML();
-        generateINScoreSetup();
+        dataContainer->writeFiles(projectName);
         delete dom;
     }
 }
@@ -89,7 +93,7 @@ void MainInterface::loadFile()
 
 void MainInterface::removeObjects(const int num)
 {
-    objectList.erase(num);
+    dataContainer->removeObject(num);
     entryLineList.erase(num);
 }
 
@@ -99,6 +103,16 @@ void MainInterface::quitApp()
     if(quit == QMessageBox::Yes) {
         qApp->quit();
     }
+}
+
+void MainInterface::advancedOptionsWindow(const int num)
+{
+    optWindow = new AdvancedOptions();
+    optWindow->displayInitValues(dataContainer->getObject(num));
+    optWindow->exec();
+
+    optWindow->close();
+    delete optWindow;
 }
 
 QString MainInterface::extractProjectName()
@@ -115,7 +129,7 @@ QString MainInterface::extractProjectName()
 void MainInterface::writeXML()
 {
      /* generates the dom object */
-     dom->generateXML(&objectList);
+     dom->generateXML(dataContainer->getList());
 
      /* writes it in a file (name asked to user) */
      if (!projectName.isNull()) {
@@ -144,99 +158,4 @@ void MainInterface::writeINScore()
    QTextStream aliasStream(&aliasFile);
    aliasStream << inscoreAliases;
    aliasFile.close();
-}
-
-void MainInterface::generateINScoreSetup()
-{
-    inscoreSetup.clear();
-    inscoreAliases.clear();
-
-    inscoreAliases = "! This file contains aliases instruction for INScore \n";
-    inscoreAliases = inscoreAliases + "! It has to be conform with the i-score OSC tree (.xml) \n";
-    inscoreAliases = inscoreAliases + "! in a normal use, you DON'T have to MODIFY this file \n";
-    inscoreAliases = inscoreAliases + "! ************************************************************** \n \n";
-
-    inscoreSetup = "! This file contains the init value for the INScore object \n";
-    inscoreSetup = inscoreSetup + "! You can adjust it at your will \n";
-    inscoreSetup = inscoreSetup + "!  ************************************************************** \n \n";
-
-    if(objectList.empty()) {
-        QMessageBox::critical(NULL,"Error","Nothing to generate !");
-        return;
-    }
-    map<int, INScoreObject*>::iterator pairIt= objectList.begin();
-
-    /* ******************************************
-     *      OSC address has following form :
-     *
-     * /scene/objectName/parameter/variable
-     *
-     * we want to write :
-     * 'INScorePath' alias 'OSCaddress' 'method'
-     *
-     * where method is (here) equal to "variable"
-     *
-     ********************************************/
-
-    string signal = "signal";
-    while(pairIt!=objectList.end())
-    {
-        INScoreObject * it(pairIt->second);
-        string OSCaddress = string("\"/") + (it)->getScene() + "/" + (it)->getName() + "/"; // OSC address for an object
-        string inscoreAddress = (it)->getPath();
-        string method = "";
-        string reAllocateSignal = string("/ITL/") + (it)->getScene() + string(" watch+ endPaint ("); // watch for new value for a signal to draw it in the graph
-        /* Creating the setup */
-        if((it)->getToCreate()) {
-            /* Rules for graph element : building signals */
-            if((it)->getType().compare("graph") == 0) {
-                string signalPath = string("/ITL/") + (it)->getScene() + "/signal" ;
-                string setSignal = signalPath + "/" + (it)->getCreationValue() + " set ";
-                int k = 0;
-                while(k< (it)->getSignalSize())
-                {
-                    QString inscoreSignalAdress = QString((signalPath + "/" + (it)->getSignal(k) + (it)->getName()).c_str());
-                    inscoreSetup = inscoreSetup + inscoreSignalAdress + QString((" size " + (it)->getBufferSize(k) + "; \n").c_str());
-                    inscoreSetup = inscoreSetup + inscoreSignalAdress + QString((" default " + (it)->getSignalValue(k) + "; \n").c_str());
-                    inscoreAliases = inscoreAliases + inscoreSignalAdress + QString((" alias \"/" + (it)->getScene() + "/" + (it)->getName() + "/signal/" + (it)->getSignal(k) + "\"; \n").c_str());
-                    setSignal = setSignal + (it)->getSignal(k) + (it)->getName() +  " ";
-                    ++k;
-                }
-                // set signal : set y t h s b a
-                inscoreSetup = inscoreSetup + QString((setSignal + "; \n").c_str());
-                // add a watch command to display new value
-                inscoreSetup = inscoreSetup + QString((reAllocateSignal + inscoreAddress + " set " + (it)->getType() + " " + (it)->getCreationValue() + "); \n").c_str());
-            }
-            /* Setup for all new element */
-            string inscoreNewAddress = inscoreAddress + " set " + (it)->getType() + " " + (it)->getCreationValue();
-            inscoreSetup = inscoreSetup + QString((inscoreNewAddress + ";" + "\n").c_str());
-            inscoreSetup = inscoreSetup + QString((inscoreAddress + " show 0;" + "\n").c_str());
-        }
-
-        int i = 0;
-        /* creating aliases for all parameter */
-        while(i<dom->getNbParameters()) {
-            string currentParam = dom->getParameter(i)->getParameterName();
-            if((it)->isParameterChecked(currentParam)) {
-                string OSCparamAddress = OSCaddress + currentParam + "/"; // loop to add each parameter
-                int j = 0;
-                while(j<dom->getParameter(i)->getNbVariable()) {
-                    inscoreAddress = (it)->getPath();
-                    method = dom->getParameter(i)->getVariable(j).getVariableName();
-                    if(signal.compare(dom->getParameter(i)->getParameterName()) != 0) {
-                        string OSCfinalAddress = OSCparamAddress + dom->getParameter(i)->getVariable(j).getVariableName() + "\""; // loop to add each variable
-                        inscoreAliases = inscoreAliases + QString((inscoreAddress + " alias " + OSCfinalAddress + " " + method + ";" + "\n").c_str()); // and write
-                    }
-                    j++;
-                }
-            }
-            i++;
-        }
-        inscoreSetup = inscoreSetup + QString("\n");
-        inscoreAliases = inscoreAliases +  QString("\n");
-        ++pairIt;
-    }
-    QString aliasFile = extractProjectName();
-    inscoreSetup = inscoreSetup + "/ITL load \"" + aliasFile + "-alias.inscore\"; \n";
-    writeINScore();
 }

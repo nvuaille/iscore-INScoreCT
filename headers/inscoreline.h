@@ -34,6 +34,7 @@ public:
 
 signals:
     void removeLine(const int lineIndex);
+    void advancedOptions(const int lineIndex);
 
 private slots:
     /* ***************************************************
@@ -51,6 +52,8 @@ private slots:
 
     // remove the current line
     void on_removeButton_clicked();
+
+    void on_pushButton_clicked();
 
 private:
     const int index;

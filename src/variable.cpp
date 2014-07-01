@@ -1,4 +1,4 @@
-#include "variable.h"
+#include "../headers/variable.h"
 
 Variable::Variable(): name(" "), object(" "), service("parameter"), type("none"), rangeBounds(" "), rangeClipmode("none"), priority("0"), tag(" ")
 {

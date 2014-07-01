@@ -3,8 +3,9 @@
 
 #include <QWidget>
 #include "inscoreline.h"
-#include "inscoreobject.h"
+#include "inscoredata.h"
 #include "xmldata.h"
+#include "advancedoptions.h"
 
 namespace Ui {
     class MainInterface;
@@ -61,11 +62,16 @@ public slots:
 
     void quitApp();
 
+    void advancedOptionsWindow(const int num);
+
 private:
     Ui::MainInterface *ui;
 
+    AdvancedOptions *optWindow;
+
     /* list of all inscoreObject to include in the setup */
-    map<int, INScoreObject*> objectList;
+
+    INScoreData *dataContainer;
     map<int, INScoreLine*> entryLineList;
 
     XmlData *dom; // = new XmlData();

@@ -1,4 +1,4 @@
-#include "parameter.h"
+#include "../headers/parameter.h"
 
 Parameter::Parameter()
 {

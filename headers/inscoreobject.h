@@ -49,6 +49,8 @@ public:
     bool getToCreate() const;
     void setToCreate(bool value);
 
+    float getInitValue(const string valueName);
+    void setInitValue(const string name, const float value);
 
     /* ************************************************
      * get and set for signal vector
@@ -62,6 +64,7 @@ public:
     int nbTypes();
     int nbParameters();
 
+    string getInitCommand();
 
 private:
     string name;
@@ -70,9 +73,10 @@ private:
     string type;
     string creationValue;
 
+    map<string, float> initValues {{"red", 0}, {"green", 0}, {"blue", 0}, {"alpha", 255}, {"x", 0.0}, {"y", 0.0}, {"z", 0.0}, {"xorigin", 0.0}, {"yorigin", 0.0}, {"angle", 0}, {"scale", 1.0}};
     vector<string> parametersName {"display", "size", "color", "dcolor", "position", "dposition", "time", "dtime", "transformation", "signal"};
 
-    map<string, bool> parametersList {{"display", false}, {"size", false}, {"color", false}, {"dcolor", false}, {"position", false}, {"dposition", false}, {"time", false}, {"dtime", false}, {"transformation", false}, {"signal", false}};
+    map<string, bool> parametersList {{"display", true}, {"size", false}, {"color", false}, {"dcolor", false}, {"position", false}, {"dposition", false}, {"time", false}, {"dtime", false}, {"transformation", false}, {"signal", false}};
 
     bool toCreate;
 

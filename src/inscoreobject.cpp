@@ -1,4 +1,4 @@
-#include "inscoreobject.h"
+#include "../headers/inscoreobject.h"
 
 /* ************************************************
  * ctor & dtor
@@ -164,6 +164,21 @@ void INScoreObject::setToCreate(bool value)
     toCreate = value;
 }
 
+float INScoreObject::getInitValue(const string valueName)
+{
+    if(initValues.find(valueName) != initValues.end()) {
+        return initValues.find(valueName)->second;
+    }
+    else return 0;
+}
+
+void INScoreObject::setInitValue(const string name, const float value)
+{
+    if(initValues.find(name) != initValues.end()) {
+        initValues[name]=value;
+    }
+}
+
 
 // signal name
 string INScoreObject::getSignal(int _i)
@@ -200,4 +215,17 @@ int INScoreObject::nbTypes()
 int INScoreObject::nbParameters()
 {
     return int(parametersList.size());
+}
+
+string INScoreObject::getInitCommand()
+{
+    string command = path + " set " + type + " " + creationValue + ";\n";
+
+    map<string, float>::iterator it = initValues.begin();
+    while(it != initValues.end()) {
+        command += path + " " + it->first + " " + std::to_string(it->second) + ";\n";
+        ++it;
+    }
+
+    return command;
 }

@@ -229,3 +229,13 @@ string INScoreObject::getInitCommand()
 
     return command;
 }
+map<string, float> INScoreObject::getInitValues() const
+{
+    return initValues;
+}
+
+void INScoreObject::setInitValues(const map<string, float> init)
+{
+    initValues = init;
+}
+

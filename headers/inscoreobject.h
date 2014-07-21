@@ -66,6 +66,9 @@ public:
 
     string getInitCommand();
 
+    map<string, float> getInitValues() const;
+    void setInitValues(const map<string, float> init);
+
 private:
     string name;
     string scene;
@@ -73,7 +76,7 @@ private:
     string type;
     string creationValue;
 
-    map<string, float> initValues {{"red", 0}, {"green", 0}, {"blue", 0}, {"alpha", 255}, {"x", 0.0}, {"y", 0.0}, {"z", 0.0}, {"xorigin", 0.0}, {"yorigin", 0.0}, {"angle", 0}, {"scale", 1.0}};
+    map<string, float> initValues {{"red", 0.0}, {"green", 0.0}, {"blue", 0.0}, {"alpha", 255.0}, {"x", 0.0}, {"y", 0.0}, {"z", 0.0}, {"xorigin", 0.0}, {"yorigin", 0.0}, {"angle", 0.0}, {"scale", 1.0}};
     vector<string> parametersName {"display", "size", "color", "dcolor", "position", "dposition", "time", "dtime", "transformation", "signal"};
 
     map<string, bool> parametersList {{"display", true}, {"size", false}, {"color", false}, {"dcolor", false}, {"position", false}, {"dposition", false}, {"time", false}, {"dtime", false}, {"transformation", false}, {"signal", false}};
@@ -82,7 +85,7 @@ private:
 
     // default setup
     vector<string> typesEnabled {"none", "curve", "ellipse", "fastgraph", "file", "gmnf", "grid", "graph", "html", "layer", "line xy" ,      "polygon",       "rect",  "svgf", "txt"};
-    vector<string> defaultValues {"",      "",     "1. 1.",     "",         "",     "",   "1 1", "mySignal",  "",    "" ,      "1. 1." ,"0. 0. 1. 1. 0. 1.",  "1. 1.",  "", "\"hello\""};
+    vector<string> defaultValues {" ",      " ",     "1. 1.",     " ",     " ",     " ",   "1 1", "mySignal",  " ",  " " ,      "1. 1." ,"0. 0. 1. 1. 0. 1.",  "1. 1.",  "", "\"hello\""};
 
     // signal
     vector<string> signal {           "y",   "t",   "h",   "s",   "b",   "a" };

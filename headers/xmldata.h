@@ -44,7 +44,10 @@ public:
      * generates the xml DOM that describe the OSC tree
      * it takes informations from objectList
      * ***************************************************/
-    void generateXML(map<int, INScoreObject *> *_objectList);
+    void generateOSCTree(map<int, INScoreObject *> *_objectList);
+
+    void generateSaveFile(map<int, INScoreObject *> *_objectList);
+
     void xmlToInscoreObject();
 
     INScoreObject * getObject(int index);
@@ -61,7 +64,7 @@ private:
     QDomElement newContainerElement(string _name, string _tag);
 
     /* object that contain all the xml informations */
-    QDomDocument domDoc;
+    QDomDocument *domDoc;
 
     /* list all enabled parameters */
     vector<Parameter*> parameters;

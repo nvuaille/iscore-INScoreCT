@@ -36,7 +36,7 @@ void MainInterface::newLine()
 
 void MainInterface::readInputs()
 {
-    projectName = QFileDialog::getSaveFileName(this,QString("Save"),QString("../../../.."));
+    projectName = QFileDialog::getSaveFileName(this,QString("Save"),QString("../../../.."),tr("*.conf"));
     if(!projectName.isNull()) {  // <- if no save name, nothing is done
         dom = new XmlData();
 
@@ -67,7 +67,7 @@ void MainInterface::readInputs()
                 ++it;
             }
         }
-        writeXML();
+        writeXML(projectName);
         dataContainer->writeFiles(projectName);
         delete dom;
     }
@@ -76,25 +76,40 @@ void MainInterface::readInputs()
 void MainInterface::loadFile()
 {
     dom = new XmlData();
-    projectName = QFileDialog::getOpenFileName(this,QString("Load"),QString("../../.."));
+    projectName = QFileDialog::getOpenFileName(this,QString("Load"),QString("../../.."), QString("*.conf"));
     if (!projectName.isNull()) {
+        clearAll();
         dom->readFile(projectName);
         dom->xmlToInscoreObject();
-    }
-
-    int i(0);
-    while(i<dom->nbInscoreObject()) {
-        newLine();
-        entryLineList[newIndex-1]->setLine(dom->getObject(i));
-        ++i;
+        int i(0);
+        while(i<dom->nbInscoreObject()) {
+            newLine();
+            entryLineList[newIndex-1]->setLine(dom->getObject(i));
+            dataContainer->addObject(i,*(dom->getObject(i)));
+            ++i;
+        }
     }
     delete dom;
 }
 
 void MainInterface::removeObjects(const int num)
 {
-    dataContainer->removeObject(num);
-    entryLineList.erase(num);
+    if(entryLineList.find(num) != entryLineList.end()) {
+        dataContainer->removeObject(num);
+        entryLineList[num]->close();
+        entryLineList.erase(num);
+    }
+}
+
+void MainInterface::clearAll()
+{
+    int erase = QMessageBox::question(this, "Clear all", "Do you really want to clear all the current configuration ?", QMessageBox::Yes | QMessageBox::No);
+    if(erase == QMessageBox::Yes) {
+        for(int i= 0; i< newIndex; ++i) {
+            removeObjects(i);
+        }
+        newIndex = 0;
+    }
 }
 
 void MainInterface::quitApp()
@@ -125,37 +140,21 @@ QString MainInterface::extractProjectName()
     }
 }
 
-
-void MainInterface::writeXML()
+void MainInterface::writeXML(QString projectPath)
 {
-     /* generates the dom object */
-     dom->generateXML(dataContainer->getList());
+     /* generate the dom object */
+     dom->generateOSCTree(dataContainer->getList());
 
-     /* writes it in a file (name asked to user) */
-     if (!projectName.isNull()) {
-         QString fileName = projectName + "-iscore.xml";
-         dom->writeFile(fileName);
-     }
+     /* write it in a file (name asked to user) */
+     QString fileName = projectPath + "-iscore.xml";
+     dom->writeFile(fileName);
+
+     dom->generateSaveFile(dataContainer->getList());
+     fileName = projectPath + ".conf";
+     dom->writeFile(fileName);
 }
 
-
-void MainInterface::writeINScore()
+void MainInterface::on_clearButton_clicked()
 {
-    /* write the 2 inscore files */
-   QString setupPath = projectName + "-setup.inscore";
-   QFile setupFile(setupPath);
-   setupFile.open(QIODevice::WriteOnly | QIODevice::Text);
-
-   QTextStream setupStream(&setupFile);
-   setupStream << inscoreSetup;
-
-   setupFile.close();
-
-   QString aliasPath = projectName + "-alias.inscore";
-   QFile aliasFile(aliasPath);
-   aliasFile.open(QIODevice::WriteOnly | QIODevice::Text);
-
-   QTextStream aliasStream(&aliasFile);
-   aliasStream << inscoreAliases;
-   aliasFile.close();
+    clearAll();
 }

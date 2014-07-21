@@ -79,9 +79,19 @@ void INScoreLine::setLine(INScoreObject *_object)
     ui->nameLine->setText(_object->getName().c_str());
     ui->pathLine->setText(_object->getPath().c_str());
     string boxName = "";
-    for(int i(0); i<nbCheckBoxes(); ++i) {
+    for(int i(1); i<nbCheckBoxes(); ++i) {
         boxName = _object->getParameterName(i);
         ui->parametersBox->findChild<QCheckBox *>(boxName.c_str())->setChecked(_object->isParameterChecked(i));
+    }
+    ui->toCreateButton->setChecked(_object->getToCreate());
+    ui->creationValue->setText(_object->getCreationValue().c_str());
+
+    int i(0);
+    while(i<ui->typeList->count()) {
+        if(ui->typeList->itemText(i).toStdString().compare(_object->getType()) == 0) {
+            ui->typeList->setCurrentIndex(i);
+        }
+        ++i;
     }
 }
 
@@ -94,6 +104,7 @@ void INScoreLine::on_toCreateButton_toggled(bool checked)
 {
     ui->typeList->setEnabled(checked);
     ui->creationValue->setEnabled(checked);
+    ui->options->setEnabled(checked);
 }
 
 // fill in path
@@ -194,7 +205,6 @@ void INScoreLine::on_removeButton_clicked()
     int del = QMessageBox::question(this, "Delete line", "Do you really want to delete this line ?", QMessageBox::Yes | QMessageBox::No);
     if(del == QMessageBox::Yes) {
         emit removeLine(index);
-        this->close();
     }
 }
 
@@ -205,7 +215,7 @@ void INScoreLine::loadFileName()
     fileObject = true;
 }
 
-void INScoreLine::on_pushButton_clicked()
+void INScoreLine::on_options_clicked()
 {
     emit advancedOptions(index);
 }

@@ -23,22 +23,9 @@ public:
      * calls the XML_Dom::generateXML and write the file
      * calls generateINScoreSetup()
      *
-     * called by "read()"
+     * called by "readInputs()"
      * ********************************************************/
-    void writeXML();
-
-    /* ********************************************************
-     * writes the inscore files :
-     * alias file and setup file
-     * ********************************************************/
-    void writeINScore();
-
-    /* ********************************************************
-     * generates the INScore instructions for the setup
-     * i.e. to create new object and all aliases
-     * ********************************************************/
-    void generateINScoreSetup();
-
+    void writeXML(QString projectPath);
 
 public slots:
 
@@ -60,9 +47,14 @@ public slots:
 
     void removeObjects(const int num);
 
+    void clearAll();
+
     void quitApp();
 
     void advancedOptionsWindow(const int num);
+
+private slots:
+    void on_clearButton_clicked();
 
 private:
     Ui::MainInterface *ui;
@@ -75,12 +67,6 @@ private:
     map<int, INScoreLine*> entryLineList;
 
     XmlData *dom; // = new XmlData();
-
-    /* contain text to write in inscore setup file */
-    QString inscoreSetup;
-
-    /* contain text to write in inscore aliases file */
-    QString inscoreAliases;
 
     /* name used for the created files, filled in by user */
     QString projectName;

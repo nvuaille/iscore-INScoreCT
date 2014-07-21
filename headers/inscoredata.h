@@ -16,6 +16,7 @@ public:
     ~INScoreData();
 
     void addObject(const int index);
+    void addObject(const int index, const INScoreObject &_copy);
     void removeObject(const int index);
     void generateSetup();
     void generateAliases();

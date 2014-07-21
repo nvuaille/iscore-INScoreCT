@@ -14,6 +14,12 @@ void INScoreData::addObject(const int index)
     objectList[index] = new INScoreObject();
 }
 
+void INScoreData::addObject(const int index, const INScoreObject &_copy)
+{
+    objectList[index] = new INScoreObject();
+    objectList[index]->setInitValues(_copy.getInitValues());
+}
+
 void INScoreData::removeObject(const int index)
 {
     if(objectList.find(index) != objectList.end()) {

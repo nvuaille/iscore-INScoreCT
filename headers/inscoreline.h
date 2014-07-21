@@ -53,7 +53,7 @@ private slots:
     // remove the current line
     void on_removeButton_clicked();
 
-    void on_pushButton_clicked();
+    void on_options_clicked();
 
 private:
     const int index;

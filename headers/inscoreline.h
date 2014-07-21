@@ -41,18 +41,19 @@ private slots:
      * SLOTS
      * **************************************************/
 
-    // create button en/dis-ables type list
+    /* create button en/dis-ables type list */
     void on_toCreateButton_toggled(bool checked);
 
-    // change name auto fill in path
+    /* change name auto fill in path */
     void on_nameLine_textChanged(const QString &arg1);
 
-    // dis- or en-ables the checkboxes, in accordance with selected type
+    /* dis- or en-ables the checkboxes, in accordance with selected type */
     void on_typeList_currentIndexChanged(int index);
 
-    // remove the current line
+    /* remove the current line */
     void on_removeButton_clicked();
 
+    /* emit signal "advancedOptions" */
     void on_options_clicked();
 
 private:

@@ -36,7 +36,7 @@ void MainInterface::newLine()
 
 void MainInterface::readInputs()
 {
-    projectName = QFileDialog::getSaveFileName(this,QString("Save"),QString("../../../.."),tr("*.conf"));
+    projectName = QFileDialog::getSaveFileName(this,QString("Save"),QString("../../../.."));
     if(!projectName.isNull()) {  // <- if no save name, nothing is done
         dom = new XmlData();
 

@@ -20,17 +20,15 @@ public:
     ~MainInterface();
 
     /* ********************************************************
-     * calls the XML_Dom::generateXML and write the file
-     * calls generateINScoreSetup()
-     *
-     * called by "readInputs()"
+     * call the XML_Dom::generateXML and write the file
+     * call generateINScoreSetup()
      * ********************************************************/
     void writeXML(QString projectPath);
 
 public slots:
 
     /* ********************************************************
-     *  Creates a new inscoreLine
+     *  Create a new inscoreLine
      *
      * A line as this content :
      *  name - path - checkBox with parameters - object type
@@ -43,14 +41,30 @@ public slots:
      * ********************************************************/
     void readInputs();
 
+    /* ********************************************************
+     * load an existing work
+     * ********************************************************/
     void loadFile();
 
+    /* ********************************************************
+     * Remove the object from the list of INScore ojects
+     * ********************************************************/
     void removeObjects(const int num);
 
+    /* ********************************************************
+     * Clear all the entries
+     * ********************************************************/
     void clearAll();
 
+    /* ********************************************************
+     * Close the app
+     * ********************************************************/
     void quitApp();
 
+    /* ********************************************************
+     * open the Window containing the advanced options
+     * of the current object
+     * ********************************************************/
     void advancedOptionsWindow(const int num);
 
 private slots:
@@ -59,14 +73,17 @@ private slots:
 private:
     Ui::MainInterface *ui;
 
+    /* Pop up window for advanced options */
     AdvancedOptions *optWindow;
 
     /* list of all inscoreObject to include in the setup */
-
     INScoreData *dataContainer;
+
+    /* list of INScoreLine */
     map<int, INScoreLine*> entryLineList;
 
-    XmlData *dom; // = new XmlData();
+    /* contain data for the xml files */
+    XmlData *dom;
 
     /* name used for the created files, filled in by user */
     QString projectName;

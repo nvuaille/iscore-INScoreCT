@@ -7,6 +7,7 @@
 using namespace std;
 
 /* ***************************************************
+ * Class-container :
  * A parameter is a collection of variables
  *
  *      for example the parameter "color" can contain
@@ -21,7 +22,11 @@ public:
 
     string getParameterName() const;
 
+    /* **********************************************
+     * add a variable in the list
+     * **********************************************/
     void addVariable(Variable* _var);
+
     Variable getVariable(int _i) const;
 
     int getNbVariable() const;

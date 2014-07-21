@@ -17,6 +17,10 @@ public:
     explicit AdvancedOptions(QWidget *parent = 0);
     ~AdvancedOptions();
 
+    /* **************************************
+     * set up to date the advanced options,
+     * following the current INScore object
+     * **************************************/
     void displayInitValues(INScoreObject * object);
 
 signals:
@@ -29,6 +33,7 @@ private slots:
 
 private:
     Ui::AdvancedOptions *ui;
+    /* associated object */
     INScoreObject *currentObject;
 };
 

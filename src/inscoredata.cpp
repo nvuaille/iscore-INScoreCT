@@ -29,18 +29,6 @@ void INScoreData::removeObject(const int index)
 
 void INScoreData::generateSetup()
 {
-    /* ******************************************
-     *      OSC address has following form :
-     *
-     * /scene/objectName/parameter/variable
-     *
-     * we want to write :
-     * 'INScorePath' alias 'OSCaddress' 'method'
-     *
-     * where method is (here) equal to "variable"
-     *
-     ********************************************/
-
     setup.clear();
     setup = "! This file contains the init value for the INScore object \n";
     setup = setup + "! You can adjust it at your will \n";
@@ -91,6 +79,13 @@ void INScoreData::generateSetup()
 
 void INScoreData::generateAliases()
 {
+    /* ******************************************
+     * we want to write :
+     * 'INScorePath' alias 'OSCaddress' 'method'
+     *
+     * where method is (here) equal to "variable"
+     *
+     ********************************************/
     aliases.clear();
 
     aliases = "! This file contains aliases instruction for INScore \n";

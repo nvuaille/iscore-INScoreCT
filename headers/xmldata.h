@@ -31,7 +31,7 @@ public:
     ~XmlData();
 
     /* ***************************************************
-     * a revoir
+     * Read a ".conf" file and load it in a DOM object
      * ***************************************************/
     void readFile(QString _file);
 
@@ -46,8 +46,16 @@ public:
      * ***************************************************/
     void generateOSCTree(map<int, INScoreObject *> *_objectList);
 
+    /* ***************************************************
+     * generate a xml DOM that contain all informations
+     * needed to edit a previous work
+     * ***************************************************/
     void generateSaveFile(map<int, INScoreObject *> *_objectList);
 
+    /* ***************************************************
+     * fill in the INScore Object list with informations
+     * from the DOM object.
+     * ***************************************************/
     void xmlToInscoreObject();
 
     INScoreObject * getObject(int index);
@@ -59,7 +67,7 @@ public:
 
 private:
     /* ***************************************************
-     * creates a xml node, that contain others
+     * create a xml node, that contain others
      * ***************************************************/
     QDomElement newContainerElement(string _name, string _tag);
 
@@ -69,6 +77,7 @@ private:
     /* list all enabled parameters */
     vector<Parameter*> parameters;
 
+    /* the object list */
     map<int, INScoreObject *> inscoreObjectList;
 
 };

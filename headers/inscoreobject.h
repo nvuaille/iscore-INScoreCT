@@ -8,7 +8,7 @@
 using namespace std;
 
 /* **********************************************
- * Describe an INScore object, with all
+ * Class describe an INScore object, with all
  * informations needed to create it.
  * **********************************************/
 
@@ -52,6 +52,15 @@ public:
     float getInitValue(const string valueName);
     void setInitValue(const string name, const float value);
 
+    int nbTypes();
+    int nbParameters();
+
+    string getInitCommand();
+
+    map<string, float> getInitValues() const;
+    void setInitValues(const map<string, float> init);
+
+
     /* ************************************************
      * get and set for signal vector
      * ************************************************/
@@ -61,13 +70,6 @@ public:
     string getBufferSize(int _i);
     string getSignalValue(int _i);
 
-    int nbTypes();
-    int nbParameters();
-
-    string getInitCommand();
-
-    map<string, float> getInitValues() const;
-    void setInitValues(const map<string, float> init);
 
 private:
     string name;
@@ -76,9 +78,12 @@ private:
     string type;
     string creationValue;
 
+    /* default initials values : modified by the "advanced options" */
     map<string, float> initValues {{"red", 0.0}, {"green", 0.0}, {"blue", 0.0}, {"alpha", 255.0}, {"x", 0.0}, {"y", 0.0}, {"z", 0.0}, {"xorigin", 0.0}, {"yorigin", 0.0}, {"angle", 0.0}, {"scale", 1.0}};
+
     vector<string> parametersName {"display", "size", "color", "dcolor", "position", "dposition", "time", "dtime", "transformation", "signal"};
 
+    /* list of enabled parameters and their state (checked or not). "Display" is always true */
     map<string, bool> parametersList {{"display", true}, {"size", false}, {"color", false}, {"dcolor", false}, {"position", false}, {"dposition", false}, {"time", false}, {"dtime", false}, {"transformation", false}, {"signal", false}};
 
     bool toCreate;

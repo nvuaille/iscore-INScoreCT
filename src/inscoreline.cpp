@@ -60,6 +60,7 @@ bool INScoreLine::parameterValue(string _name)
 QString INScoreLine::getCreationValue()
 {
     QString value = ui->creationValue->text();
+    /* file and text need to be beetwen quote sign */
     if(fileObject||textObject) {
         value = QString("\"") + value + QString("\"");
     }

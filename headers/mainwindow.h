@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-
+#include <QMessageBox>
 #include "inscoreline.h"
 #include "maininterface.h"
 

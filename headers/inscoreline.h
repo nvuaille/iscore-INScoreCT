@@ -3,6 +3,8 @@
 
 #include <QtGui>
 #include <QWidget>
+#include <QMessageBox>
+#include <QFileDialog>
 #include <iostream>
 #include "inscoreobject.h"
 

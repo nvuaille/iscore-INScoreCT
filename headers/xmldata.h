@@ -4,6 +4,7 @@
 #include <QtGui>
 #include <QtXml>
 #include <QWidget>
+#include <QMessageBox>
 #include <vector>
 #include "inscoreobject.h"
 #include "parameter.h"

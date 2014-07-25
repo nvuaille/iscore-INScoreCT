@@ -13,7 +13,7 @@ TARGET = iscore-INScoreCT
 TEMPLATE = app
 QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.9
 QMAKE_CXXFLAGS += -std=c++11 -stdlib=libc++ -Wno-deprecated-register
-
+QMAKE_LFLAGS += -std=c++11 -stdlib=libc++ -Wno-deprecated-register
 SOURCES += src/main.cpp\
         src/mainwindow.cpp \
     src/inscoreobject.cpp \

@@ -3,7 +3,7 @@
 
 #include<QWidget>
 #include<QtGui>
-#include<String>
+#include<string>
 #include<QString>
 #include"inscoreobject.h"
 #include "xmldata.h"
